@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#172554"><meta name="description" content="PostFlow - quản lý bài đăng Facebook">
+<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./assets/icon.svg">
+<title>PostFlow • Facebook Publisher</title>
+
+<style>
+:root{--navy:#172554;--blue:#2563eb;--bg:#f4f7fb;--ink:#172033;--muted:#64748b;--line:#e2e8f0}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,Arial,sans-serif}
+.app{min-height:100vh;display:flex}.sidebar{width:250px;background:#111c3b;color:#fff;padding:24px 16px;display:flex;flex-direction:column;flex-shrink:0}
+.brand{font-size:22px;font-weight:800;display:flex;gap:12px;align-items:center;padding:4px 10px 30px}.brandmark{background:#3b82f6;border-radius:10px;padding:7px 10px}.brand small{display:block;font-size:9px;letter-spacing:1.5px;color:#a5b4fc}
+nav{display:grid;gap:7px}.nav{border:0;background:transparent;color:#cbd5e1;text-align:left;padding:13px 14px;border-radius:10px;font-size:15px;cursor:pointer}.nav:hover,.nav.active{background:#26365f;color:white}.sidefoot{margin-top:auto;color:#cbd5e1;font-size:12px;padding:16px 8px}.dot{display:inline-block;width:8px;height:8px;background:#22c55e;border-radius:50%;margin-right:8px}
+.main{min-width:0;flex:1}.topbar{height:68px;background:white;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:5}.crumb{font-weight:700}.crumb b{color:#94a3b8;margin:0 8px}.topright{display:flex;align-items:center;gap:16px}.connection{font-size:12px;color:var(--muted)}.connection i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-right:6px}.content{max-width:1450px;margin:auto;padding:28px}
+.page{display:none}.page.show{display:block}.welcome,.pagehead{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.eyebrow{font-size:11px;font-weight:800;letter-spacing:1.5px;color:#2563eb}h1{font-size:28px;margin:5px 0}h2{font-size:18px;margin:0 0 5px}p{color:var(--muted);margin:4px 0}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin:18px 0}.stats.secondary{margin-top:0}.stat,.panel{background:white;border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:0 3px 12px #0f172a08}.stat span{display:block;color:var(--muted);font-size:13px}.stat strong{display:block;font-size:29px;margin:8px 0}.stat small{color:var(--muted)}.stat.compact strong{font-size:24px}.green{color:#16a34a}.orange{color:#d97706}.red{color:#dc2626}
+.panel{margin:18px 0}.panelhead{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:16px}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:650px}th,td{text-align:left;padding:12px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:12px;color:var(--muted);background:#f8fafc}td{font-size:13px}.btn{border:1px solid var(--line);border-radius:9px;padding:10px 15px;cursor:pointer;font-weight:700;background:white;color:#334155}.btn:hover{filter:brightness(.97)}.btn.primary{background:var(--blue);color:white;border-color:var(--blue)}.btn.light{background:#fff}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.field{display:flex;flex-direction:column;gap:7px;font-weight:700;font-size:13px}.field.full,.full{grid-column:1/-1}.field small,.hint{font-weight:400;color:var(--muted);font-size:12px}input,textarea{width:100%;border:1px solid #cbd5e1;border-radius:9px;padding:11px 12px;font:inherit;background:white;color:var(--ink)}textarea{resize:vertical;min-height:85px}input:focus,textarea:focus{outline:2px solid #bfdbfe;border-color:#60a5fa}.filters{display:grid;grid-template-columns:repeat(4,minmax(130px,1fr)) auto auto;gap:9px}.search{max-width:260px}.group-list,.schedule-list,.activity-list{display:grid;gap:10px}.group-item,.schedule-item,.activity-item{border:1px solid var(--line);border-radius:10px;padding:13px;display:flex;justify-content:space-between;align-items:center;gap:12px;overflow-wrap:anywhere}.group-item a{color:#2563eb}.notice{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:14px;color:#1e40af;font-size:13px;margin-top:18px}.empty{padding:24px;text-align:center;color:var(--muted)}.tag{display:inline-block;border-radius:20px;padding:4px 9px;background:#f1f5f9;font-size:11px}.tag.success{background:#dcfce7;color:#166534}.tag.failed{background:#fee2e2;color:#991b1b}.tag.wait{background:#fef3c7;color:#92400e}.fb-connect{display:flex;align-items:center;gap:18px}.fb-logo{background:#1877f2;color:#fff;font-size:35px;font-weight:800;width:58px;height:58px;border-radius:12px;display:grid;place-items:center}.fb-copy{flex:1}.fb-actions{display:flex;gap:8px}.hamb{display:none}.toast{position:fixed;right:22px;bottom:22px;background:#172554;color:white;padding:12px 18px;border-radius:10px;opacity:0;transform:translateY(10px);transition:.2s;z-index:20;pointer-events:none}.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:900px){.sidebar{width:210px}.content{padding:18px}.stats{grid-template-columns:repeat(2,1fr)}.filters{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:650px){.app{display:block}.sidebar{position:fixed;z-index:10;left:-260px;top:0;bottom:0;width:250px;transition:.2s}.sidebar.open{left:0}.hamb{display:block;border:0;background:white;font-size:20px;cursor:pointer}.topbar{padding:0 14px}.topright .connection{display:none}.content{padding:14px}.welcome,.pagehead{align-items:flex-start;gap:12px;flex-direction:column}.stats{gap:9px}.stat{padding:14px}.stat strong{font-size:24px}.formgrid,.filters{grid-template-columns:1fr}.field.full,.full{grid-column:auto}.fb-connect{align-items:flex-start;flex-wrap:wrap}.fb-actions{width:100%;flex-wrap:wrap}.panel{padding:15px}}
+</style>
+
+</head>
+<body>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+  <div class="brand"><span class="brandmark">➤</span><span>PostFlow<small>FACEBOOK PUBLISHER</small></span></div>
+  <nav>
+    <button class="nav active" data-page="dashboard">▦ <span>Tổng quan</span></button>
+    <button class="nav" data-page="compose">✎ <span>Đăng bài</span></button>
+    <button class="nav" data-page="groups">♧ <span>Nhóm Facebook</span></button>
+    <button class="nav" data-page="history">☷ <span>Lịch sử đăng bài</span></button>
+    <button class="nav" data-page="schedule">◷ <span>Lịch hẹn đăng</span></button>
+    <button class="nav" data-page="activity">∿ <span>Nhật ký hoạt động</span></button>
+    <button class="nav" data-page="facebook">f <span>Đăng nhập Facebook</span></button>
+
+  </nav>
+  <div class="sidefoot"><span class="dot"></span><span id="modeLabel">Chế độ website độc lập</span></div>
+</aside>
+<main class="main">
+<header class="topbar"><button class="hamb" id="hamb">☰</button><div class="crumb">PostFlow <b>›</b> <span id="crumb">Tổng quan</span></div><div class="topright"><span class="connection"><i></i><span id="connectionText">Dữ liệu lưu trên trình duyệt</span></span><button class="btn light" id="exportBtn">Xuất dữ liệu</button></div></header>
+<div class="content">
+<section class="page show" id="page-dashboard">
+  <div class="welcome"><div><div class="eyebrow">TỔNG QUAN</div><h1>Chào mừng đến với PostFlow</h1><p>Theo dõi bài đăng, nhóm Facebook và các tác vụ tại một nơi.</p></div><button class="btn primary" data-go="compose">＋ Tạo bài đăng</button></div>
+  <div class="stats">
+    <article class="stat"><span>Tổng công việc</span><strong id="statTotal">0</strong><small>Tất cả bản ghi</small></article>
+    <article class="stat"><span>Thành công</span><strong class="green" id="statSuccess">0</strong><small>Đã xác nhận / đã đăng</small></article>
+    <article class="stat"><span>Chờ xử lý</span><strong class="orange" id="statWaiting">0</strong><small>Đang chờ / cần đối chiếu</small></article>
+    <article class="stat"><span>Lỗi</span><strong class="red" id="statFailed">0</strong><small>Cần kiểm tra</small></article>
+  </div>
+  <div class="stats secondary"><article class="stat compact"><span>Nhóm đang quản lý</span><strong id="statGroups">0</strong></article><article class="stat compact"><span>Công việc hôm nay</span><strong id="statToday">0</strong></article><article class="stat compact"><span>Trong tháng</span><strong id="statMonth">0</strong></article><article class="stat compact"><span>Trong năm</span><strong id="statYear">0</strong></article></div>
+  <div class="panel"><div class="panelhead"><div><h2>Công việc gần đây</h2><p>Dữ liệu được lấy từ danh sách lịch sử hiện tại.</p></div><button class="btn light" data-go="history">Xem tất cả</button></div><div class="tablewrap"><table><thead><tr><th>Thời gian</th><th>Nội dung</th><th>Nhóm</th><th>Trạng thái</th></tr></thead><tbody id="recentRows"></tbody></table></div></div>
+  <div class="notice" id="staticNotice"><b>Chế độ GitHub Pages:</b> dữ liệu được lưu trên trình duyệt của thiết bị này. Website tĩnh không tự chạy Python hoặc đăng bài Facebook khi bạn đóng trình duyệt. Dùng bản Hybrid để chạy tác vụ nền.</div>
+</section>
+<section class="page" id="page-compose">
+  <div class="pagehead"><div><div class="eyebrow">NỘI DUNG</div><h1>Soạn bài đăng</h1><p>Tạo nội dung và chọn các nhóm Facebook cần đăng.</p></div></div>
+  <div class="panel formgrid"><label class="field full">Nội dung bài viết<textarea id="postContent" rows="8" placeholder="Nhập nội dung bài viết..."></textarea></label>
+  <label class="field full">Link nhóm Facebook (mỗi link một dòng)<textarea id="postGroups" rows="5" placeholder="https://www.facebook.com/groups/..."></textarea></label>
+  <label class="field">Ảnh đính kèm<input type="file" id="postImages" accept="image/*" multiple><small>Website tĩnh lưu ảnh trong trình duyệt; dung lượng phụ thuộc thiết bị.</small></label>
+  <label class="field">Tên bài viết / ghi chú<input id="postTitle" placeholder="Ví dụ: Bài quảng bá tháng 11"></label>
+  <div class="actions full"><button class="btn primary" id="publishBtn">Đưa vào danh sách đăng</button><button class="btn light" id="saveDraftBtn">Lưu bản nháp</button><button class="btn light" id="clearComposeBtn">Xóa nội dung</button></div>
+  <p class="hint full" id="composeHint">Bản GitHub Pages chỉ quản lý dữ liệu và tạo danh sách công việc; không tự đăng lên Facebook.</p></div>
+</section>
+<section class="page" id="page-groups">
+  <div class="pagehead"><div><div class="eyebrow">QUẢN LÝ</div><h1>Nhóm Facebook</h1><p>Thêm nhiều nhóm, chuẩn hóa đường dẫn và kiểm tra trùng.</p></div></div>
+  <div class="panel"><label class="field">Thêm link nhóm (mỗi link một dòng)<textarea id="groupInput" rows="6" placeholder="https://www.facebook.com/groups/ten-nhom"></textarea></label><div class="actions"><button class="btn primary" id="addGroupsBtn">＋ Thêm nhóm</button><button class="btn light" id="checkDupBtn">Kiểm tra link trùng</button></div></div>
+  <div class="panel"><div class="panelhead"><div><h2>Danh sách nhóm <span class="count" id="groupCount">0</span></h2><p>Nhóm được lưu trên thiết bị hoặc máy chủ tùy phiên bản.</p></div><input class="search" id="groupSearch" placeholder="Tìm link nhóm..."></div><div id="groupList" class="group-list"></div></div>
+</section>
+<section class="page" id="page-history">
+  <div class="pagehead"><div><div class="eyebrow">THEO DÕI</div><h1>Lịch sử đăng bài</h1><p>Tìm theo nội dung, ngày/tháng/năm, giờ đăng và link nhóm.</p></div></div>
+  <div class="panel filters"><input id="searchText" placeholder="Từ khóa trong bài viết"><input id="searchDate" placeholder="Ngày/tháng/năm hoặc yyyy-mm-dd"><input id="searchTime" placeholder="Giờ, ví dụ 14:30"><input id="searchGroup" placeholder="Link nhóm Facebook"><button class="btn primary" id="searchBtn">Tìm kiếm</button><button class="btn light" id="resetSearchBtn">Xóa lọc</button></div>
+  <div class="panel"><div class="tablewrap"><table><thead><tr><th>Ngày / giờ</th><th>Nội dung bài</th><th>Nhóm</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody id="historyRows"></tbody></table></div><div class="empty" id="historyEmpty">Chưa có bản ghi phù hợp.</div></div>
+</section>
+<section class="page" id="page-schedule">
+  <div class="pagehead"><div><div class="eyebrow">TỰ ĐỘNG HÓA</div><h1>Lịch hẹn đăng</h1><p>Quản lý các lịch đăng đã tạo.</p></div></div>
+  <div class="panel formgrid"><label class="field">Tên lịch<input id="scheduleTitle" placeholder="Lịch đăng bài"></label><label class="field">Thời gian đăng<input id="scheduleTime" type="datetime-local"></label><label class="field full">Nội dung<textarea id="scheduleContent" rows="4" placeholder="Nội dung bài viết"></textarea></label><label class="field full">Link nhóm (mỗi link một dòng)<textarea id="scheduleGroups" rows="3" placeholder="https://www.facebook.com/groups/..."></textarea></label><div class="actions full"><button class="btn primary" id="addScheduleBtn">＋ Tạo lịch hẹn</button></div><p class="hint full" id="scheduleHint">Bản GitHub Pages không thể thực thi lịch khi trình duyệt đã đóng.</p></div>
+  <div class="panel"><div class="panelhead"><h2>Danh sách lịch</h2></div><div id="scheduleList" class="schedule-list"></div></div>
+</section>
+
+<section class="page" id="page-facebook">
+  <div class="pagehead"><div><div class="eyebrow">TÀI KHOẢN</div><h1>Kết nối Facebook</h1>
+  <p>Đăng nhập trực tiếp trong cửa sổ Facebook. PostFlow không yêu cầu hoặc lưu mật khẩu của bạn.</p></div></div>
+  <div class="panel fb-connect">
+    <div class="fb-logo">f</div>
+    <div class="fb-copy"><h2>Đăng nhập tài khoản Facebook</h2>
+      <p id="facebookStatus">Chưa mở phiên đăng nhập Facebook.</p>
+      <small>Hãy đăng nhập và hoàn tất xác minh (nếu Facebook yêu cầu). Sau đó đóng cửa sổ trình duyệt đăng nhập để quay lại PostFlow.</small>
+    </div>
+    <div class="fb-actions"><button class="btn primary" id="facebookLoginBtn">f &nbsp; Đăng nhập Facebook</button>
+      <button class="btn light" id="facebookOpenBtn">Mở Facebook</button></div>
+  </div>
+  <div class="notice"><b>Lưu ý bảo mật:</b> Không nhập mật khẩu Facebook vào PostFlow. Bản Hybrid mở trình duyệt riêng của PostFlow để lưu phiên đăng nhập cho tác vụ đăng bài. Bản GitHub Pages chỉ mở Facebook trong tab mới; đăng nhập ở đó không kết nối phiên với máy chủ tự động hóa.</div>
+</section>
+\n<section class="page" id="page-activity">
+  <div class="pagehead"><div><div class="eyebrow">NHẬT KÝ</div><h1>Nhật ký hoạt động</h1><p>Lưu lại thao tác được thực hiện trong PostFlow.</p></div></div>
+  <div class="panel"><div id="activityList" class="activity-list"></div></div>
+</section>
+</div>
+</main></div>
+<div class="toast" id="toast"></div>
+
+
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+const KEY='postflow_data_v1';
+const blank=()=>({groups:[],jobs:[],drafts:[],schedules:[],activity:[]});
+let data;
+try{data=JSON.parse(localStorage.getItem(KEY))||blank()}catch{data=blank()}
+for(const k of Object.keys(blank())) if(!Array.isArray(data[k])) data[k]=[];
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(data));}catch(e){toast('Không đủ dung lượng lưu. Hãy giảm số lượng ảnh hoặc xuất dữ liệu.')}};
+function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),2600)}
+function log(msg){data.activity.unshift({text:msg,time:new Date().toISOString()});data.activity=data.activity.slice(0,300);save();renderActivity()}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function date(v){try{return new Date(v).toLocaleString('vi-VN')}catch{return v||''}}
+function links(text){return [...new Set(String(text||'').split(/\s+/).map(x=>x.trim()).filter(Boolean).map(x=>{try{let u=new URL(x);return /(^|\.)facebook\.com$/i.test(u.hostname)?u.href.replace(/\/+$/,''):null}catch{return null}}).filter(Boolean))]}
+function showPage(name){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('show',p.id==='page-'+name));document.querySelectorAll('.nav').forEach(b=>b.classList.toggle('active',b.dataset.page===name));const n=document.querySelector('.nav[data-page="'+name+'"] span');$('crumb').textContent=n?n.textContent:'Tổng quan';$('sidebar').classList.remove('open');}
+document.querySelectorAll('.nav').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.go)));
+$('hamb').addEventListener('click',()=>$('sidebar').classList.toggle('open'));
+function renderGroups(){const q=$('groupSearch').value.toLowerCase();const arr=data.groups.filter(x=>x.url.toLowerCase().includes(q));$('groupCount').textContent=data.groups.length;$('groupList').innerHTML=arr.length?arr.map(g=>`<div class="group-item"><a href="${esc(g.url)}" target="_blank" rel="noopener">${esc(g.url)}</a><button class="btn light" data-del-group="${esc(g.id)}">Xóa</button></div>`).join(''):'<div class="empty">Chưa có nhóm Facebook.</div>'}
+$('addGroupsBtn').addEventListener('click',()=>{const urls=links($('groupInput').value);let added=0;for(const url of urls){if(!data.groups.some(g=>g.url===url)){data.groups.push({id:crypto.randomUUID(),url});added++}}save();log('Đã thêm '+added+' nhóm Facebook');$('groupInput').value='';renderAll();toast('Đã thêm '+added+' nhóm hợp lệ.')});
+$('checkDupBtn').addEventListener('click',()=>{const raw=$('groupInput').value.split(/\s+/).filter(Boolean);const valid=links($('groupInput').value);toast(`Tìm thấy ${valid.length} link hợp lệ, ${raw.length-valid.length} dòng không hợp lệ hoặc trùng.`)});
+$('groupSearch').addEventListener('input',renderGroups);
+$('groupList').addEventListener('click',e=>{const b=e.target.closest('[data-del-group]');if(!b)return;data.groups=data.groups.filter(g=>g.id!==b.dataset.delGroup);save();log('Đã xóa một nhóm Facebook');renderAll()});
+function addJob(content,title,urls,images){const now=new Date().toISOString();urls.forEach(url=>data.jobs.unshift({id:crypto.randomUUID(),content,title,url,images,created:now,status:'waiting',statusText:'Chờ xử lý'}));save();log('Đã tạo '+urls.length+' công việc đăng bài');}
+$('publishBtn').addEventListener('click',async()=>{const content=$('postContent').value.trim(),urls=[...new Set([...links($('postGroups').value),...data.groups.map(g=>g.url)])],files=[...($('postImages').files||[])];if(!content){toast('Vui lòng nhập nội dung bài viết.');return}if(!urls.length){toast('Vui lòng nhập hoặc thêm ít nhất một link nhóm.');return}
+try{const images=await Promise.all(files.map(f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res({name:f.name,data:r.result});r.onerror=rej;r.readAsDataURL(f)})));addJob(content,$('postTitle').value.trim(),urls,images);toast('Đã đưa bài vào danh sách công việc.');renderAll();showPage('history')}catch{toast('Không đọc được ảnh đính kèm.')}});
+$('saveDraftBtn').addEventListener('click',()=>{const content=$('postContent').value.trim();if(!content){toast('Chưa có nội dung để lưu.');return}data.drafts.unshift({id:crypto.randomUUID(),content,title:$('postTitle').value,groups:$('postGroups').value,created:new Date().toISOString()});save();log('Đã lưu bản nháp');toast('Đã lưu bản nháp trên trình duyệt.')});
+$('clearComposeBtn').addEventListener('click',()=>{['postContent','postGroups','postTitle'].forEach(id=>$(id).value='');$('postImages').value='';toast('Đã xóa nội dung soạn thảo.')});
+function statusTag(j){let c=j.status==='success'?'success':j.status==='failed'?'failed':'wait';return `<span class="tag ${c}">${esc(j.statusText)}</span>`}
+function renderHistory(){const q=$('searchText').value.toLowerCase(),d=$('searchDate').value.toLowerCase(),t=$('searchTime').value.toLowerCase(),g=$('searchGroup').value.toLowerCase();const arr=data.jobs.filter(j=>(j.content+' '+j.title).toLowerCase().includes(q)&&date(j.created).toLowerCase().includes(d)&&date(j.created).toLowerCase().includes(t)&&j.url.toLowerCase().includes(g));$('historyRows').innerHTML=arr.map(j=>`<tr><td>${esc(date(j.created))}</td><td>${esc(j.title||j.content.slice(0,140))}<br><small>${j.images?.length||0} ảnh đính kèm</small></td><td><a href="${esc(j.url)}" target="_blank" rel="noopener">${esc(j.url)}</a></td><td>${statusTag(j)}</td><td><button class="btn light" data-status="success" data-id="${j.id}">Đã đăng</button> <button class="btn light" data-status="failed" data-id="${j.id}">Báo lỗi</button> <button class="btn light" data-status="waiting" data-id="${j.id}">Chờ</button> <button class="btn light" data-delete-job="${j.id}">Xóa</button></td></tr>`).join('');$('historyEmpty').style.display=arr.length?'none':'block'}
+$('searchBtn').addEventListener('click',renderHistory);$('resetSearchBtn').addEventListener('click',()=>{['searchText','searchDate','searchTime','searchGroup'].forEach(id=>$(id).value='');renderHistory()});
+$('historyRows').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const j=data.jobs.find(x=>x.id===b.dataset.id);if(b.dataset.status&&j){j.status=b.dataset.status;j.statusText={success:'Đã xác nhận đăng',failed:'Cần kiểm tra',waiting:'Chờ xử lý'}[j.status];save();log('Cập nhật trạng thái công việc: '+j.statusText)}if(b.dataset.deleteJob){data.jobs=data.jobs.filter(x=>x.id!==b.dataset.deleteJob);save();log('Đã xóa công việc')}renderAll()});
+$('addScheduleBtn').addEventListener('click',()=>{const title=$('scheduleTitle').value.trim()||'Lịch đăng bài',time=$('scheduleTime').value,content=$('scheduleContent').value.trim(),groups=links($('scheduleGroups').value);if(!time||!content||!groups.length){toast('Nhập thời gian, nội dung và ít nhất một link nhóm.');return}if(new Date(time).getTime()<Date.now()){toast('Thời gian hẹn phải ở tương lai.');return}data.schedules.unshift({id:crypto.randomUUID(),title,time:new Date(time).toISOString(),content,groups,status:'scheduled'});save();log('Đã tạo lịch hẹn: '+title);['scheduleTitle','scheduleTime','scheduleContent','scheduleGroups'].forEach(id=>$(id).value='');renderAll();toast('Đã tạo lịch hẹn. Lịch chỉ được kiểm tra khi trang đang mở.')});
+function renderSchedules(){$('scheduleList').innerHTML=data.schedules.length?data.schedules.map(s=>`<div class="schedule-item"><div><b>${esc(s.title)}</b><div>${esc(date(s.time))} · ${s.groups.length} nhóm · ${esc(s.status==='done'?'Đã chuyển thành công việc':'Đang chờ')}</div></div><div><button class="btn light" data-run-schedule="${s.id}">Tạo công việc</button> <button class="btn light" data-delete-schedule="${s.id}">Xóa</button></div></div>`).join(''):'<div class="empty">Chưa có lịch hẹn.</div>'}
+$('scheduleList').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const s=data.schedules.find(x=>x.id===b.dataset.runSchedule);if(s){addJob(s.content,s.title,s.groups,[]);s.status='done';save();toast('Đã chuyển lịch thành danh sách công việc.')}if(b.dataset.deleteSchedule){data.schedules=data.schedules.filter(x=>x.id!==b.dataset.deleteSchedule);save();log('Đã xóa lịch hẹn')}renderAll()});
+function renderActivity(){$('activityList').innerHTML=data.activity.length?data.activity.map(a=>`<div class="activity-item"><span>${esc(a.text)}</span><small>${esc(date(a.time))}</small></div>`).join(''):'<div class="empty">Chưa có hoạt động.</div>'}
+function renderDashboard(){const jobs=data.jobs;const today=new Date().toDateString(),month=new Date().getMonth(),year=new Date().getFullYear();$('statTotal').textContent=jobs.length;$('statSuccess').textContent=jobs.filter(j=>j.status==='success').length;$('statWaiting').textContent=jobs.filter(j=>j.status==='waiting').length;$('statFailed').textContent=jobs.filter(j=>j.status==='failed').length;$('statGroups').textContent=data.groups.length;$('statToday').textContent=jobs.filter(j=>new Date(j.created).toDateString()===today).length;$('statMonth').textContent=jobs.filter(j=>new Date(j.created).getMonth()===month&&new Date(j.created).getFullYear()===year).length;$('statYear').textContent=jobs.filter(j=>new Date(j.created).getFullYear()===year).length;$('recentRows').innerHTML=jobs.slice(0,6).map(j=>`<tr><td>${esc(date(j.created))}</td><td>${esc((j.title||j.content).slice(0,80))}</td><td>${esc(j.url)}</td><td>${statusTag(j)}</td></tr>`).join('')||'<tr><td colspan="4" class="empty">Chưa có công việc.</td></tr>'}
+function renderAll(){renderGroups();renderHistory();renderSchedules();renderActivity();renderDashboard()}
+$('facebookLoginBtn').addEventListener('click',()=>{window.open('https://www.facebook.com/','_blank','noopener');$('facebookStatus').textContent='Đã mở Facebook trong tab mới. Phiên đăng nhập không được kết nối với PostFlow.';log('Đã mở trang đăng nhập Facebook')});
+$('facebookOpenBtn').addEventListener('click',()=>window.open('https://www.facebook.com/','_blank','noopener'));
+$('exportBtn').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='postflow-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(url);toast('Đã xuất dữ liệu.')});
+function checkSchedules(){const now=Date.now();data.schedules.filter(s=>s.status==='scheduled'&&new Date(s.time).getTime()<=now).forEach(s=>{s.status='due';log('Lịch đã đến giờ: '+s.title)});save();renderSchedules()}
+renderAll();checkSchedules();setInterval(checkSchedules,30000);
+})();
+</script>
+
+</body></html>
